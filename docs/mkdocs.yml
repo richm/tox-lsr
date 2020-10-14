@@ -1,0 +1,10 @@
+site_name: tox-lsr
+site_description: tox plugin for linux-system-roles dev/test
+site_author: Rich Megginson
+
+theme: readthedocs
+
+repo_url: https://github.com/richm/tox-lsr
+
+pages:
+- Home: index.md
