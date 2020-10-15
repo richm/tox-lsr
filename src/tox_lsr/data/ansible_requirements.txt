@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: MIT
+
+# dependencies for ansible
+idna<2.8 ; python_version < "2.7"
+PyYAML<5.1 ; python_version < "2.7"
