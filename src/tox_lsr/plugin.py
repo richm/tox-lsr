@@ -26,8 +26,9 @@ def merge_config(config, default_config):
                     continue  # skip protected attrs
                 if not hasattr(envconf, propname):
                     setattr(envconf, propname, getattr(def_envconf, propname))
-    config.envlist = list(config.envconfigs.keys())
-    config.envlist_default = config.envlist
+    if not config.envlist_explicit:
+        config.envlist = list(config.envconfigs.keys())
+        config.envlist_default = config.envlist
 
 
 @hookimpl
@@ -48,7 +49,10 @@ def tox_configure(config):
     tox_default = pkg_resources.resource_filename(__name__, "data/tox-default.ini")
     #tox_parser = ToxParser()
     tox_parser = config._parser
-    default_config = ToxConfig(config.pluginmanager, config.option, config.interpreters, tox_parser, [])
+    #args = ["--workdir", str(config.toxworkdir)]
+    args = []
+    config.option.workdir = config.toxworkdir
+    default_config = ToxConfig(config.pluginmanager, config.option, config.interpreters, tox_parser, args)
     for conf_file in tox_propose_configs(tox_default):
         ToxParseIni(default_config, conf_file, None)
     #default_config, option = tox_parse_cli(["-c", tox_default], config.pluginmanager)
