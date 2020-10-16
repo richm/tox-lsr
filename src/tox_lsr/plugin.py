@@ -1,3 +1,4 @@
+import os
 import pluggy
 import pkg_resources
 from tox.reporter import verbosity0
@@ -46,18 +47,22 @@ def tox_addoption(parser):
 @hookimpl
 def tox_configure(config):
     """Access your option during configuration"""
-    tox_default = pkg_resources.resource_filename(__name__, "data/tox-default.ini")
+    tox_script_filename = pkg_resources.resource_filename(__name__, "data/.travis/custom.sh")
+    tox_scriptdir = os.path.dirname(tox_script_filename)
+    tox_default_string = pkg_resources.resource_string(__name__, "data/tox-default.ini").decode()
+    tox_default_string = tox_default_string.replace("{lsr_scriptdir}", tox_scriptdir)
     #tox_parser = ToxParser()
     tox_parser = config._parser
     #args = ["--workdir", str(config.toxworkdir)]
     args = []
     config.option.workdir = config.toxworkdir
     default_config = ToxConfig(config.pluginmanager, config.option, config.interpreters, tox_parser, args)
-    for conf_file in tox_propose_configs(tox_default):
-        ToxParseIni(default_config, conf_file, None)
-    #default_config, option = tox_parse_cli(["-c", tox_default], config.pluginmanager)
+    #for conf_file in tox_propose_configs(tox_default):
+    #    ToxParseIni(default_config, tox_default_filename, tox_default_string)
+    ToxParseIni(default_config, config.toxinipath, tox_default_string)
+    #default_config, option = tox_parse_cli(["-c", tox_default_filename], config.pluginmanager)
     merge_config(config, default_config)
-    verbosity0("config is {} flag magic is: {} tox_default.ini {} default_config {}".format(config, config.option.magic, tox_default, default_config))
+    verbosity0("config is {} flag magic is: {} tox_default.ini {} default_config {}".format(config, config.option.magic, config.toxinipath, default_config))
 
 
 @hookimpl
