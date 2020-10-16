@@ -6,8 +6,4 @@
 
 from setuptools import setup
 
-setup(
-    package_data={
-        "": ["data/*", "data/.*"],
-    }
-)
+setup(package_data={"": ["data/*", "data/.*"]})
