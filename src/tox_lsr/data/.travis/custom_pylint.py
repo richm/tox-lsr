@@ -74,7 +74,7 @@ def blue(s):
     Return string `s` colorized to blue.
     """
 
-    return "%s%s%s" % (Fore.BLUE, s, Fore.RESET)
+    return "{}{}{}".format(Fore.BLUE, s, Fore.RESET)
 
 
 def print_line(s):
@@ -156,9 +156,7 @@ def main():
         return 0
     if os.getenv("RUN_PYLINT_DISABLED", "") != "":
         return 0
-    files = probe_dir(
-        os.getcwd(), re.compile(include_pattern), re.compile(exclude_pattern)
-    )
+    files = probe_dir(os.getcwd(), re.compile(include_pattern), re.compile(exclude_pattern))
     if not files:
         return 0
     show_files(files)

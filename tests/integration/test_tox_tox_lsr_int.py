@@ -4,14 +4,15 @@ def test_run(initproj, cmd):
         filedefs={
             "tox.ini": """
                 [tox]
-                envlist = py, b
+                envlist = py
                 skipsdist = True
                 [testenv]
                 commands=python -c "print('perform')"
-                [testenv:b]
-                cinderella = True
             """
+            # [testenv:b]
+            # cinderella = True
         },
     )
-    result = cmd("--magic", "yes")
+    # result = cmd("--magic", "yes")
+    result = cmd("--showconfig")
     result.assert_success(is_run_test_env=False)
