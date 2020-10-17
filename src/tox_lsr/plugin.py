@@ -15,6 +15,39 @@ except ImportError:
 hookimpl = pluggy.HookimplMarker("tox")
 
 
+def is_string(val):
+    """Return True if val is a string type"""
+
+    isstring = False
+    try:
+        isstring = isinstance(val, basestring)
+    except NameError:
+        isstring = isinstance(val, str)
+    return isstring
+
+
+def prop_is_set(envconf, propname):
+    """Return True if the property was explicitly set to a value"""
+
+    section_name = toxtestenvprefix + envconf.envname
+    cfg = envconf._reader._cfg.sections.get(section_name, {})
+    tecfg = envconf._reader._cfg.sections.get("testenv", {})
+    if propname in cfg or propname in tecfg:
+        return True
+    val = getattr(envconf, propname)
+    # see if val is one of the scalar types
+    if is_string(val):
+        return len(val) > 0  # assume empty string is unset
+    if isinstance(val, int):
+        return False  # no way to tell
+    if isinstance(val, float):
+        return False  # no way to tell
+    if isinstance(val, bool):
+        return False  # no way to tell
+    # not a simple scalar type - see if empty
+    return bool(val)
+
+
 def merge_prop_values(propname, envconf, def_envconf):
     """if propname is one of the values we can merge,
     do the merge"""
@@ -35,32 +68,50 @@ def merge_envconf(envconf, def_envconf):
     envconf"""
     # access what was actually set in the customized tox.ini so that
     # we can override the properties which were not set
-    section_name = toxtestenvprefix + envconf.envname
-    orig_cfg = envconf._reader._cfg.sections[section_name]
     for propname in dir(def_envconf):
-        if propname.startswith("_"):
-            continue  # skip protected attrs
-        if propname not in orig_cfg:
-            try:
-                setattr(envconf, propname, getattr(def_envconf, propname))
-            except AttributeError:  # some attrs cannot be set
-                pass
-        else:
-            merge_prop_values(propname, envconf, def_envconf)
+        if prop_is_set(def_envconf, propname):
+            if not prop_is_set(envconf, propname):
+                try:
+                    setattr(envconf, propname, getattr(def_envconf, propname))
+                except AttributeError:  # some props cannot be set
+                    pass
+            else:
+                merge_prop_values(propname, envconf, def_envconf)
+
+
+def merge_ini(config, default_config):
+    """merge the parsed ini config values/sections"""
+
+    for def_section_name, def_section in default_config._cfg.sections.items():
+        section = config._cfg.sections.setdefault(def_section_name, def_section)
+        if section is not def_section:
+            for key, value in def_section.items():
+                if key not in section:
+                    section[key] = value
 
 
 def merge_config(config, default_config):
     """Use the default_config, and override/replace the defaults
     with the given config"""
+
+    # merge the top level config properties
+    for propname in dir(default_config):
+        # set in config if not set and it's set in default
+        if (
+            propname in default_config._cfg.sections["tox"]
+            and propname not in config._cfg.sections["tox"]
+        ):
+           setattr(config, propname, getattr(default_config, propname))
+
+    # merge the testenvs
     for def_envname, def_envconf in default_config.envconfigs.items():
         if def_envname not in config.envconfigs:
             config.envconfigs[def_envname] = def_envconf
         else:
             merge_envconf(config.envconfigs[def_envname], def_envconf)
-    if not config.envlist_explicit:
-        config.envlist = list(config.envconfigs.keys())
-        config.envlist_default = config.envlist
 
+    # merge the actual parsed ini file sections
+    merge_ini(config, default_config)
 
 @hookimpl
 def tox_addoption(parser):
@@ -75,7 +126,8 @@ def tox_addoption(parser):
     pass
 
 
-@hookimpl
+# Use tryfirst=True so that this is applied before the tox-travis plugin
+@hookimpl(tryfirst=True)
 def tox_configure(config):
     """Access your option during configuration"""
 
