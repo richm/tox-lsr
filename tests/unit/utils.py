@@ -5,6 +5,8 @@
 
 
 class MockConfig(object):
+    """Mocks the tox.config.Config class"""
+
     __slots__ = ("envlist",)
 
     def __init__(self, envlist=None):
