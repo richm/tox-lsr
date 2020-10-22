@@ -18,17 +18,6 @@ except ImportError:
 # pylint: disable=protected-access
 
 
-def is_string(val: object) -> bool:
-    """Return True if val is a string type, False otherwise."""
-
-    isstring = False
-    try:
-        isstring = isinstance(val, basestring)
-    except NameError:
-        isstring = isinstance(val, str)
-    return isstring
-
-
 def prop_is_set(envconf: TestenvConfig, propname: str) -> bool:
     """Determine if property propname was explicitly set in envconf.
 
@@ -47,13 +36,9 @@ def prop_is_set(envconf: TestenvConfig, propname: str) -> bool:
         return True
     val = getattr(envconf, propname)
     # see if val is one of the scalar types
-    if is_string(val):
+    if isinstance(val, str):
         return len(val) > 0  # assume empty string is unset
-    if isinstance(val, int):
-        return False  # no way to tell
-    if isinstance(val, float):
-        return False  # no way to tell
-    if isinstance(val, bool):
+    if isinstance(val, (int, float, bool)):
         return False  # no way to tell
     # not a simple scalar type - see if empty
     return bool(val)
@@ -115,12 +100,14 @@ def merge_config(config: Config, default_config: Config) -> None:
         # set in config if not set and it's set in default
         if (
             propname in default_config._cfg.sections["tox"]
-            and propname not in config._cfg.sections["tox"]
+            and propname not in config._cfg.sections["tox"]  # noqa: W503
         ):
             setattr(config, propname, getattr(default_config, propname))
     # merge the top level config properties that are set implicitly
     if not config.envlist_explicit:
-        config.envlist_default = list(set(config.envlist_default + default_config.envlist_default))
+        config.envlist_default = list(
+            set(config.envlist_default + default_config.envlist_default)
+        )
         config.envlist = list(set(config.envlist + default_config.envlist))
 
     # merge the testenvs

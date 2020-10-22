@@ -70,23 +70,20 @@ from pylint.lint import Run
 
 
 def blue(s):
-    """
-    Return string `s` colorized to blue.
-    """
+    """Return string `s` colorized to blue."""
 
     return "{}{}{}".format(Fore.BLUE, s, Fore.RESET)
 
 
 def print_line(s):
-    """
-    Write `s` followed by the line feed character to the standard output.
-    """
+    """Write `s` followed by the line feed character to the standard output."""
 
     sys.stdout.write("%s\n" % s)
 
 
 def probe_args():
-    """
+    """Analyze the command line arguments for pylint arguments.
+
     Analyze the command line arguments and return a tuple containing a list of
     pylint arguments, pattern string to recognize files to be included, and
     pattern string to recognize files and directories to be skipped.
@@ -117,7 +114,8 @@ def probe_args():
 
 
 def probe_dir(path, include_re, exclude_re):
-    """
+    """Look for files to include or exclude based on pattern.
+
     Recursively go through directory structure starting at `path`, collect
     files that match `include_re`, skip files and directories that are either
     symbolic links or match `exclude_re`. Return the list of collected files.
@@ -136,8 +134,10 @@ def probe_dir(path, include_re, exclude_re):
 
 
 def show_files(files):
-    """
-    Print `files` to the standard output, one item per line, in a blue color.
+    """Print files to check.
+
+    Print `files` to the standard output, one item per line,
+    in a blue color.
     """
 
     print_line(blue("%s: files to be checked:" % sys.argv[0]))
@@ -146,9 +146,7 @@ def show_files(files):
 
 
 def main():
-    """
-    Script entry point. Return exit code.
-    """
+    """Script entry point. Return exit code."""
 
     args, include_pattern, exclude_pattern = probe_args()
     if "-h" in args or "--help" in args:
@@ -156,7 +154,9 @@ def main():
         return 0
     if os.getenv("RUN_PYLINT_DISABLED", "") != "":
         return 0
-    files = probe_dir(os.getcwd(), re.compile(include_pattern), re.compile(exclude_pattern))
+    files = probe_dir(
+        os.getcwd(), re.compile(include_pattern), re.compile(exclude_pattern)
+    )
     if not files:
         return 0
     show_files(files)
