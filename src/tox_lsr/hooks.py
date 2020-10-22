@@ -14,6 +14,10 @@ try:
 except ImportError:
     from tox.config import parseini as ToxParseIni
 
+
+TEST_SCRIPTS_SUBDIR = "data/test_scripts"
+
+
 # code uses some protected members such as _cfg, _parser, _reader
 # pylint: disable=protected-access
 
@@ -131,7 +135,7 @@ def tox_configure(config: Config) -> None:
     tox_lsr_scriptdir = os.environ.get("TOX_LSR_SCRIPTDIR")
     if not tox_lsr_scriptdir:
         tox_lsr_script_filename = pkg_resources.resource_filename(
-            __name__, "data/.travis/runflake8.sh"
+            __name__, f"{TEST_SCRIPTS_SUBDIR}/runflake8.sh"
         )
         tox_lsr_scriptdir = os.path.dirname(tox_lsr_script_filename)
     tox_lsr_default = pkg_resources.resource_string(
@@ -141,14 +145,13 @@ def tox_configure(config: Config) -> None:
         "{tox_lsr_scriptdir}", tox_lsr_scriptdir
     )
     tox_parser = config._parser
-    args = []
     config.option.workdir = config.toxworkdir
     default_config = Config(
         config.pluginmanager,
         config.option,
         config.interpreters,
         tox_parser,
-        args,
+        [],
     )
     ToxParseIni(default_config, config.toxinipath, tox_lsr_default)
     merge_config(config, default_config)
