@@ -4,19 +4,22 @@
 """Tests for tox_lsr hooks."""
 
 import unittest2
+from unittest.mock import patch
 
 from tox_lsr.hooks import tox_configure
 
-from .utils import MockConfig
+from .utils import MockConfig, MockToxParseIni
 
 
 class HooksTestCase(unittest2.TestCase):
     def setUp(self):
-        self.__envlist_unsorted = ["envC", "envB", "envA"]
-        self.__envlist_sorted = ["envA", "envB", "envC"]
+        pass
 
-    def test_tox_configure_sorts_envlist(self):
-        config = MockConfig(envlist=self.__envlist_unsorted)
+    @patch('tox_lsr.hooks.ToxParseIni', new=MockToxParseIni)
+    @patch('tox.config.ParseIni', new=MockToxParseIni)
+    @patch('tox_lsr.hooks.Config', new=MockConfig)
+    @patch('tox.config.Config', new=MockConfig)
+    def test_tox_configure_basic(self):
+        config = MockConfig()
 
         tox_configure(config)
-        self.assertEqual(config.envlist, self.__envlist_sorted)

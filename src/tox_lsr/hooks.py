@@ -145,13 +145,12 @@ def tox_configure(config: Config) -> None:
     tox_lsr_default = tox_lsr_default.replace(
         "{tox_lsr_scriptdir}", tox_lsr_scriptdir
     )
-    tox_parser = config._parser
     config.option.workdir = config.toxworkdir
     default_config = Config(
         config.pluginmanager,
         config.option,
         config.interpreters,
-        tox_parser,
+        config._parser,
         [],
     )
     ToxParseIni(default_config, config.toxinipath, tox_lsr_default)
