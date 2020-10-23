@@ -2,22 +2,38 @@
 # SPDX-License-Identifier: MIT
 #
 """Test utilities."""
-import py
 from collections import OrderedDict
 from unittest.mock import MagicMock
+
+# I have no idea why pylint complains about this.  This works:
+# command = python -c 'import py; print(dir(py.path))'
+# bug in pylint?  anyway, just ignore it
+# in addition - pylint does not allow me to disable it
+# on the same line, so I have to disable it before the line
+# pylint: disable=no-member
+import py
 
 
 # mocks the tox.config.Config class
 class MockConfig(object):
 
+    # pylint: disable=too-many-instance-attributes
     __slots__ = (
-        "_parser", "pluginmanager", "option", "interpreters", "toxworkdir",
-        "args", "toxinipath", "toxinidir", "_cfg", "envlist_explicit",
-        "envconfigs"
+        "_parser",
+        "pluginmanager",
+        "option",
+        "interpreters",
+        "toxworkdir",
+        "args",
+        "toxinipath",
+        "toxinidir",
+        "_cfg",
+        "envlist_explicit",
+        "envconfigs",
     )
 
     def __init__(self, *args, **kwargs):
-        """Mocks tox.config.Config constructor."""
+        """Mock the tox.config.Config constructor."""
 
         if len(args) > 0:
             self.option = args[0]
@@ -39,8 +55,9 @@ class MockConfig(object):
             self.args = args[4]
         else:
             self.args = MagicMock()
-        self.toxworkdir = "/tmp"
-        self.toxinipath = py.path.local("/tmp")
+        if "toxworkdir" in kwargs:
+            self.toxworkdir = kwargs["toxworkdir"]
+            self.toxinipath = py.path.local(self.toxworkdir)
         self._cfg = MagicMock()
         self._cfg.sections = OrderedDict()
         self._cfg.sections["tox"] = OrderedDict()
@@ -49,7 +66,5 @@ class MockConfig(object):
 
 
 class MockToxParseIni(object):
-
     def __init__(self, config, ini_path, ini_data):
-        """Mocks tox.config.ParseIni constructor."""
-        pass
+        """Mock the tox.config.ParseIni constructor."""

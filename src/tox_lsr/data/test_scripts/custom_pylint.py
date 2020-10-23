@@ -102,11 +102,13 @@ def probe_args():
         arg = sys.argv[i]
         if arg == "--include":
             i += 1
-            assert i < nargs, "--include: missing PATTERN"
+            if i >= nargs:
+                raise ValueError("--include: missing PATTERN")
             include_pattern = sys.argv[i]
         elif arg == "--exclude":
             i += 1
-            assert i < nargs, "--exclude: missing PATTERN"
+            if i >= nargs:
+                raise ValueError("--exclude: missing PATTERN")
             exclude_pattern = sys.argv[i]
         else:
             args.append(arg)

@@ -3,8 +3,11 @@
 #
 """Tests for tox_lsr hooks."""
 
-import unittest2
+import shutil
+import tempfile
 from unittest.mock import patch
+
+import unittest2
 
 from tox_lsr.hooks import tox_configure
 
@@ -13,13 +16,16 @@ from .utils import MockConfig, MockToxParseIni
 
 class HooksTestCase(unittest2.TestCase):
     def setUp(self):
-        pass
+        self.toxworkdir = tempfile.mkdtemp()
 
-    @patch('tox_lsr.hooks.ToxParseIni', new=MockToxParseIni)
-    @patch('tox.config.ParseIni', new=MockToxParseIni)
-    @patch('tox_lsr.hooks.Config', new=MockConfig)
-    @patch('tox.config.Config', new=MockConfig)
+    def tearDown(self):
+        shutil.rmtree(self.toxworkdir)
+
+    @patch("tox_lsr.hooks.ToxParseIni", new=MockToxParseIni)
+    @patch("tox.config.ParseIni", new=MockToxParseIni)
+    @patch("tox_lsr.hooks.Config", new=MockConfig)
+    @patch("tox.config.Config", new=MockConfig)
     def test_tox_configure_basic(self):
-        config = MockConfig()
+        config = MockConfig(toxworkdir=self.toxworkdir)
 
         tox_configure(config)
