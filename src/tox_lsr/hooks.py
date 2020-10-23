@@ -153,5 +153,5 @@ def tox_configure(config: Config) -> None:
         config._parser,
         [],
     )
-    ToxParseIni(default_config, config.toxinipath, tox_lsr_default)
+    _ = ToxParseIni(default_config, config.toxinipath, tox_lsr_default)
     merge_config(config, default_config)
