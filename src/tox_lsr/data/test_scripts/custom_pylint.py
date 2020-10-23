@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""
+r"""
 Probe directory tree for python files and pass them to pylint.
 
 Usage: python custom_pylint.py ARGUMENTS
@@ -82,7 +82,8 @@ def print_line(s):
 
 
 def probe_args():
-    """Analyze the command line arguments for pylint arguments.
+    r"""
+    Analyze the command line arguments for pylint arguments.
 
     Analyze the command line arguments and return a tuple containing a list of
     pylint arguments, pattern string to recognize files to be included, and
@@ -114,7 +115,8 @@ def probe_args():
 
 
 def probe_dir(path, include_re, exclude_re):
-    """Look for files to include or exclude based on pattern.
+    """
+    Look for files to include or exclude based on pattern.
 
     Recursively go through directory structure starting at `path`, collect
     files that match `include_re`, skip files and directories that are either
@@ -134,7 +136,8 @@ def probe_dir(path, include_re, exclude_re):
 
 
 def show_files(files):
-    """Print files to check.
+    """
+    Print files to check.
 
     Print `files` to the standard output, one item per line,
     in a blue color.

@@ -4,8 +4,8 @@
 """Test utilities."""
 
 
+# mocks the tox.config.Config class
 class MockConfig(object):
-    """Mocks the tox.config.Config class"""
 
     __slots__ = ("envlist",)
 

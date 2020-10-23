@@ -23,7 +23,8 @@ TEST_SCRIPTS_SUBDIR = "data/test_scripts"
 
 
 def prop_is_set(envconf: TestenvConfig, propname: str) -> bool:
-    """Determine if property propname was explicitly set in envconf.
+    """
+    Determine if property propname was explicitly set in envconf.
 
     Use a heuristic to determine if the property named propname was
     explicitly set in envconf (as opposed to being set to a default
@@ -104,7 +105,7 @@ def merge_config(config: Config, default_config: Config) -> None:
         # set in config if not set and it's set in default
         if (
             propname in default_config._cfg.sections["tox"]
-            and propname not in config._cfg.sections["tox"]  # noqa: W503
+            and propname not in config._cfg.sections["tox"]
         ):
             setattr(config, propname, getattr(default_config, propname))
     # merge the top level config properties that are set implicitly
