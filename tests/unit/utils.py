@@ -3,7 +3,7 @@
 #
 """Test utilities."""
 from collections import OrderedDict
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 
 # I have no idea why pylint complains about this.  This works:
 # command = python -c 'import py; print(dir(py.path))'
@@ -38,33 +38,36 @@ class MockConfig(object):
         if len(args) > 0:
             self.option = args[0]
         else:
-            self.option = MagicMock()
+            self.option = Mock()
         if len(args) > 1:
             self.pluginmanager = args[1]
         else:
-            self.pluginmanager = MagicMock()
+            self.pluginmanager = Mock()
         if len(args) > 2:
             self.interpreters = args[2]
         else:
-            self.interpreters = MagicMock()
+            self.interpreters = Mock()
         if len(args) > 3:
             self._parser = args[3]
         else:
-            self._parser = MagicMock()
+            self._parser = Mock()
         if len(args) > 4:
             self.args = args[4]
         else:
-            self.args = MagicMock()
+            self.args = Mock()
         if "toxworkdir" in kwargs:
             self.toxworkdir = kwargs["toxworkdir"]
             self.toxinipath = py.path.local(self.toxworkdir)
-        self._cfg = MagicMock()
+        self._cfg = Mock()
         self._cfg.sections = OrderedDict()
         self._cfg.sections["tox"] = OrderedDict()
-        self.envlist_explicit = MagicMock()
+        self.envlist_explicit = Mock()
         self.envconfigs = OrderedDict()
 
 
 class MockToxParseIni(object):
     def __init__(self, config, ini_path, ini_data):
         """Mock the tox.config.ParseIni constructor."""
+        self.config = config
+        self.ini_path = ini_path
+        self.ini_data = ini_data
