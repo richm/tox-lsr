@@ -1,0 +1,60 @@
+{
+  "tox": {
+    "envlist": "mycustom1,mycustom2",
+    "skipsdist": "false",
+    "sdistsrc": "/tmp/somedir",
+    "toxworkdir": ".tox-lsr",
+    "skip_missing_interpreters": "true",
+    "ignore_basepython_conflict": "true"
+  },
+  "testenv": {
+    "setenv": "LOCAL1 = local1\nLOCAL2 = local2",
+    "commands": "localcmd1\nlocalcmd2",
+    "deps": "localdep1\nlocaldep2",
+    "ignore_outcome": "true",
+    "suicide_timeout": "5.0",
+    "description": "my local tox tests",
+    "passenv": "*",
+    "basepython": "python3",
+    "whitelist_externals": "bash"
+  },
+  "custom_common": {
+    "setenv": "CUSTOMCOMMON = customcommon",
+    "commands": "customcommoncmd",
+    "deps": "customcommondep1\ncustomcommondep2"
+  },
+  "testenv:mycustom1": {
+    "setenv": "{[custom_common]setenv}",
+    "deps": "{[custom_common]deps}",
+    "suicide_timeout": "10.0",
+    "description": "mycustom1"
+  },
+  "testenv:custom": {
+    "setenv": "OVERRIDE_CUSTOM = override_custom",
+    "commands": "override_custom_cmd",
+    "deps": "override_custom_deps1\noverride_custom_deps2"
+  },
+  "testenv:flake8": {
+    "command": "true"
+  },
+  "pytest": {
+    "addopts": "-rxs"
+  },
+  "pylint": {
+    "max-line-length": "88",
+    "disable": "wrong-import-position"
+  },
+  "pycodestyle": {
+    "max-line-length": "88"
+  },
+  "flake8": {
+    "show_source": "true",
+    "max-line-length": "88",
+    "ignore": "E402,W503,E501",
+    "exclude": ".venv,.tox",
+    "statistics": "true"
+  },
+  "travis": {
+    "python": "2.6: py26,coveralls,custom\n2.7: py27,coveralls,flake8,pylint,custom\n3.6: py36,coveralls,black,yamllint,shellcheck,custom\n3.7: py37,coveralls,custom\n3.8: py38,coveralls,custom\n3.8-dev: py38,coveralls,custom"
+  }
+}

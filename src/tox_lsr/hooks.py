@@ -63,7 +63,7 @@ def merge_prop_values(
     elif propname == "passenv":
         envconf.passenv = envconf.passenv.union(def_envconf.passenv)
     elif propname == "whitelist_externals":
-        envconf.deps = list(
+        envconf.whitelist_externals = list(
             set(envconf.whitelist_externals + def_envconf.whitelist_externals)
         )
 
@@ -74,6 +74,8 @@ def merge_envconf(envconf: TestenvConfig, def_envconf: TestenvConfig) -> None:
     # access what was actually set in the customized tox.ini so that
     # we can override the properties which were not set
     for propname in dir(def_envconf):
+        if propname.startswith("_"):
+            continue
         if prop_is_set(def_envconf, propname):
             if not prop_is_set(envconf, propname):
                 try:
@@ -93,8 +95,7 @@ def merge_ini(config: Config, default_config: Config) -> None:
         )
         if section is not def_section:
             for key, value in def_section.items():
-                if key not in section:
-                    section[key] = value
+                _ = section.setdefault(key, value)
 
 
 def merge_config(config: Config, default_config: Config) -> None:
@@ -102,6 +103,8 @@ def merge_config(config: Config, default_config: Config) -> None:
 
     # merge the top level config properties
     for propname in dir(default_config):
+        if propname.startswith("_"):
+            continue
         # set in config if not set and it's set in default
         if (
             propname in default_config._cfg.sections["tox"]
