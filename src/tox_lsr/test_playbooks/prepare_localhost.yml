@@ -1,0 +1,27 @@
+- hosts: all
+  tasks:
+    - name: Install requirements
+      package:
+        name:
+          - git
+          - python3-pip
+          - python3-virtualenv
+          - python3-setuptools
+          - openssl
+          - curl
+          - python3-ruamel-yaml
+
+    - name: ansible 2.9 in venv
+      pip:
+        name: ansible==2.9.*
+        virtualenv: "{{ lookup('env', 'ANSIBLE_VENV') }}"
+      when:
+        - ansible_facts["distribution"] == "CentOS"
+        - ansible_facts["distribution_major_version"] | int < 9
+
+    - name: ansible-core 2.13 in venv
+      pip:
+        name: ansible-core==2.13.*
+        virtualenv: "{{ lookup('env', 'ANSIBLE_VENV') }}"
+      when:
+        - ansible_facts["distribution"] == "Fedora"
