@@ -144,7 +144,7 @@ setup_vault() {
 run_ansible_playbooks() {
     setup_vault
     cd "$LSR_TEST_DIR"
-    ansible-playbook -vv --skip-tags="$SKIP_TAGS" "$vault_args" \
+    ansible-playbook -vv --skip-tags="$SKIP_TAGS" ${vault_args:-} \
         -e ansible_playbook_filepath="$(type -p ansible-playbook)" \
         -c local -i localhost, "$LSR_TEST_PB"
 }
