@@ -135,6 +135,7 @@ setup_vault() {
             unset ANSIBLE_VAULT_PASSWORD_FILE
             vault_args=""
         fi
+        ansible -c local localhost -m debug -a var=my_secret_var -e "@$vault_vars_file"
     else
         unset ANSIBLE_VAULT_PASSWORD_FILE
         vault_args=""
