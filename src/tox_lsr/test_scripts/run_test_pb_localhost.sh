@@ -154,8 +154,6 @@ prepare_control_node
 prepare_managed_node
 
 if [ "${USE_COLLECTION:-false}" = true ]; then
-    rpm -qa | grep -i yaml || :
-    pip list | grep -i yaml || :
     convert_to_collection
 fi
 
