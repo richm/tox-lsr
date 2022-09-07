@@ -8,7 +8,7 @@ fi
 
 #EXCLUDETAGS_CORE="${EXCLUDETAGS:-tests::expfail,tests::slow,tests::reboot,tests::multihost_localhost,tests::avc,tests::nvme,tests::scsi,tests::lvm,tests::no_serialization,tests::infiniband}"
 SKIP_TAGS="${SKIP_TAGS:-tests::reboot,tests::multihost_localhost,tests::nvme,tests::scsi,tests::infiniband}"
-WORK_DIR="${WORK_DIR:-$(mktemp -d lsr_XXXXXXXXXX_work)}"
+WORK_DIR="${WORK_DIR:-$(mktemp --tmpdir= -d lsr_XXXXXXXXXX_work)}"
 COLLECTION_BASE_PATH="${COLLECTION_BASE_PATH:-$WORK_DIR}"
 PLUGIN_DIR="${PLUGIN_DIR:-$WORK_DIR/plugins}"
 PLUGIN_TMP_DIR="${PLUGIN_TMP_DIR:-$WORK_DIR/plugins_tmp}"
