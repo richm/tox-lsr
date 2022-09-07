@@ -109,7 +109,7 @@ convert_to_collection() {
     role_dest="$COLLECTION_BASE_PATH/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME/roles/$REPO_NAME"
     test_dest="$COLLECTION_BASE_PATH/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME/tests/$REPO_NAME"
     rm -rf "$role_dest" "$test_dest"
-    python3 "$lsr_role2coll_path" --src-owner linux-system-roles --role "$REPO_NAME" \
+    /usr/bin/python3 "$lsr_role2coll_path" --src-owner linux-system-roles --role "$REPO_NAME" \
         --src-path "$REPO_PATH" --dest-path "$COLLECTION_BASE_PATH" \
         --namespace "$COLLECTION_NAMESPACE" --collection "$COLLECTION_NAME" \
         --subrole-prefix "private_${REPO_NAME}_subrole_" \
@@ -154,6 +154,8 @@ prepare_control_node
 prepare_managed_node
 
 if [ "${USE_COLLECTION:-false}" = true ]; then
+    rpm -qa | grep -i yaml || :
+    pip list | grep -i yaml || :
     convert_to_collection
 fi
 
