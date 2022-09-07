@@ -25,7 +25,7 @@ fi
 
 install_collection_requirements() {
     if [ -f "$REPO_PATH/meta/collection-requirements.yml" ]; then
-        ansible-galaxy collection install -U -p "$COLLECTION_BASE_PATH" -vv -r "$REPO_PATH/meta/collection-requirements.yml"
+        ansible-galaxy collection install -p "$COLLECTION_BASE_PATH" -vv -r "$REPO_PATH/meta/collection-requirements.yml"
     fi
 }
 
@@ -49,7 +49,7 @@ setup_plugins() {
             need_profile_py=1
         fi
         if [ -n "${need_debug_py:-}" ] || [ -n "${need_profile_py:-}" ]; then
-            ansible-galaxy collection install -U -p "$PLUGIN_TMP_DIR" -vv ansible.posix
+            ansible-galaxy collection install -p "$PLUGIN_TMP_DIR" -vv ansible.posix
             tmp_debug_py="$PLUGIN_TMP_DIR/ansible_collections/ansible/posix/plugins/callback/debug.py"
             tmp_profile_py="$PLUGIN_TMP_DIR/ansible_collections/ansible/posix/plugins/callback/profile_tasks.py"
             if [ -n "${need_debug_py:-}" ]; then
